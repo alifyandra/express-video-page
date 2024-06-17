@@ -5,6 +5,7 @@ import firebaseConfig from "./config/firebase.config.js";
 import { getStorage, ref, uploadString } from "firebase/storage";
 import handleUpload from "./services/handleUpload.js";
 import multer from "multer";
+import sequelize from "./models/index.js";
 
 const app: Express = express();
 const port = 8080;
@@ -14,6 +15,16 @@ const firebase = initializeApp(firebaseConfig);
 const storage = getStorage(firebase);
 
 app.use(cors());
+app.use(express.json());
+
+const db = sequelize;
+db.sync()
+  .then(() => console.log("Synced DB"))
+  .catch((err) => console.error("Failed to sync with DB", err));
+
+// db.sync({ force: true }).then(() => {
+//   console.log("Drop and re-sync db.");
+// });
 
 app.post(
   "/upload",
