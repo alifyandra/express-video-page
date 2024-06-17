@@ -22,10 +22,7 @@ export default (
         reject();
       }
 
-      console.log(data);
-
       const storageRef = ref(storage, `uploads/${newFileName}`);
-      console.log("created ref");
 
       uploadBytes(storageRef, data, { contentType: file?.mimetype })
         .then(async (snap) => {
@@ -36,6 +33,14 @@ export default (
         .catch((err) => {
           console.log(err);
           reject();
+        })
+        .finally(() => {
+          console.log("Removing " + file?.path);
+          fs.unlink(file?.path!, (err) => {
+            if (err) {
+              console.error(err);
+            }
+          });
         });
     });
   });
