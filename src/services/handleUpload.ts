@@ -8,13 +8,14 @@ import fs from "fs";
 
 export default (
   file: Express.Multer.File | undefined,
-  storage: FirebaseStorage
+  storage: FirebaseStorage,
+  username: string
 ) => {
   return new Promise<string>((resolve, reject) => {
     if (!file) {
       reject("No image file");
     }
-    const newFileName = `${file!.originalname}`;
+    const newFileName = `${username}/${file!.originalname}`;
 
     fs.readFile(file?.path!, (err, data) => {
       if (err) {

@@ -20,8 +20,10 @@ app.post(
   upload.single("file"),
   async (req: Request, res: Response) => {
     // console.log(req.file);
+    console.log(req.body);
+    const username = req.body["username"];
 
-    res.send(await handleUpload(req.file, storage));
+    res.send(await handleUpload(req.file, storage, username));
   }
 );
 
