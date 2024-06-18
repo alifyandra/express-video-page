@@ -5,17 +5,27 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import fs from "fs";
+import Upload from "../../models/upload.js";
 
 export default (
   file: Express.Multer.File | undefined,
   storage: FirebaseStorage,
-  username: string
+  username: string,
+  userId: string
 ) => {
-  return new Promise<string>((resolve, reject) => {
+  return new Promise<string>(async (resolve, reject) => {
     if (!file) {
       return reject("No image file");
     }
     const newFileName = `${username}/${file!.originalname}`;
+
+    if (
+      await Upload.findOne({
+        where: { ownerId: userId, title: file.originalname },
+      })
+    ) {
+      return reject(400);
+    }
 
     fs.readFile(file?.path!, (err, data) => {
       if (err) {
@@ -27,9 +37,23 @@ export default (
 
       uploadBytes(storageRef, data, { contentType: file?.mimetype })
         .then(async (snap) => {
-          const downloadUrl: string = await getDownloadURL(snap.ref);
-          // console.log(downloadUrl);
-          resolve(downloadUrl);
+          try {
+            const downloadUrl: string = await getDownloadURL(snap.ref);
+            // console.log(downloadUrl);
+            if (!downloadUrl) {
+              reject();
+            }
+            await Upload.create({
+              title: file.originalname,
+              url: downloadUrl,
+              owner: username,
+              ownerId: userId,
+            });
+
+            resolve(downloadUrl);
+          } catch (err) {
+            reject(err);
+          }
         })
         .catch((err) => {
           console.log(err);

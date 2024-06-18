@@ -5,6 +5,7 @@ export default class Upload extends Model {
   declare title: string;
   declare url: string;
   declare owner: string;
+  declare ownerId: number;
 }
 
 // Belongs to User

@@ -1,5 +1,3 @@
-import dotenv from "dotenv";
-dotenv.config();
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import { initializeApp } from "firebase/app";
@@ -12,6 +10,7 @@ import createUser from "./services/authentication/createUser.js";
 import jwt from "jsonwebtoken";
 import loginUser from "./services/authentication/loginUser.js";
 import verifyToken from "./services/authentication/verifyToken.js";
+import getAllUploads from "./services/uploads/getUploads.js";
 
 const app: Express = express();
 const port = 8080;
@@ -36,12 +35,20 @@ app.post(
   "/upload",
   verifyToken,
   upload.single("file"),
-  async (req: Request, res: Response) => {
-    // console.log(req.file);
-    console.log(req.body);
-    const username = req.body["username"];
+  (req: Request, res: Response) => {
+    console.log(req.params);
+    const { username } = req.body;
+    const { userId } = req.params;
 
-    res.send(await handleUpload(req.file, storage, username));
+    handleUpload(req.file, storage, username, userId)
+      .then((url) => res.status(200).send(url))
+      .catch((err) => {
+        if (err === 400) {
+          res.status(400).send("Duplicate file title");
+        } else {
+          res.status(500).send("Internal error");
+        }
+      });
   }
 );
 
@@ -93,7 +100,18 @@ app.post("/auth/register", (req, res) => {
     });
 });
 
-app.get("/uploads", (req, res) => {});
+app.get("/uploads", verifyToken, (req, res) => {
+  const { all } = req.query;
+  if (all) {
+    getAllUploads()
+      .then((uploads) => {
+        res.status(200).json(uploads);
+      })
+      .catch((err) => res.status(500).send("Internal error"));
+  } else {
+    res.status(404).send();
+  }
+});
 
 app.listen(port, () => {
   console.log("Server is running on port:" + port);
