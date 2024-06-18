@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import { initializeApp } from "firebase/app";
@@ -7,6 +9,9 @@ import handleUpload from "./services/uploads/handleUpload.js";
 import multer from "multer";
 import sequelize from "./models/index.js";
 import createUser from "./services/authentication/createUser.js";
+import jwt from "jsonwebtoken";
+import loginUser from "./services/authentication/loginUser.js";
+import verifyToken from "./services/authentication/verifyToken.js";
 
 const app: Express = express();
 const port = 8080;
@@ -29,6 +34,7 @@ db.sync()
 
 app.post(
   "/upload",
+  verifyToken,
   upload.single("file"),
   async (req: Request, res: Response) => {
     // console.log(req.file);
@@ -39,21 +45,51 @@ app.post(
   }
 );
 
-app.post("/auth/login", (req, res) => {});
+app.post("/auth/login", (req, res) => {
+  const { username, password } = req.body;
+  loginUser(username, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { userId: user.id.toString() },
+        process.env["JWT_KEY"]!,
+        {
+          expiresIn: "30m",
+        }
+      );
+
+      res.status(200).json({
+        success: true,
+        token: token,
+      });
+    })
+    .catch((err) => {
+      if (err === 401) {
+        res.status(401).send("Authentication failed");
+      } else {
+        res.status(500).send("Internal error");
+      }
+    });
+});
 
 app.post("/auth/register", (req, res) => {
-  console.log("hi");
   const { username, password } = req.body;
   createUser(username, password)
-    .then((data) => {
-      res.status(200).send("Successfully created user");
+    .then((user) => {
+      const token = jwt.sign(
+        { userId: user.id.toString() },
+        process.env["JWT_KEY"]!,
+        {
+          expiresIn: "30m",
+        }
+      );
+      res.status(200).json({
+        success: true,
+        token: token,
+      });
     })
     .catch((err) => {
       console.error(err);
-      res.status(400).json({
-        status: 400,
-        message: "Email in use",
-      });
+      res.status(400).send("Username taken");
     });
 });
 

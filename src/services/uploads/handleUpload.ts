@@ -13,14 +13,14 @@ export default (
 ) => {
   return new Promise<string>((resolve, reject) => {
     if (!file) {
-      reject("No image file");
+      return reject("No image file");
     }
     const newFileName = `${username}/${file!.originalname}`;
 
     fs.readFile(file?.path!, (err, data) => {
       if (err) {
         console.error(err);
-        reject();
+        return reject();
       }
 
       const storageRef = ref(storage, `uploads/${newFileName}`);

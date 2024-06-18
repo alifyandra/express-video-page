@@ -3,21 +3,21 @@ import bcrypt from "bcrypt";
 import User from "../../models/user.js";
 
 const createUser = (username: string, password: string) => {
-  return new Promise<string>(async (resolve, reject) => {
+  return new Promise<User>(async (resolve, reject) => {
     try {
-      const hashedPassword = await bcrypt.hash(password, 10);
-
       if (await User.findOne({ where: { username: username } })) {
         reject("User exists");
         return;
       }
 
+      const hashedPassword = await bcrypt.hash(password, 10);
+
       const user = await User.create({
         username: username,
         password: hashedPassword,
       });
-      console.log(user);
-      resolve(user.id.toString());
+
+      resolve(user);
     } catch (error) {
       reject(error);
     }
