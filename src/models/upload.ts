@@ -1,17 +1,29 @@
-import { DataTypes, ModelAttributes } from "sequelize";
+import { DataTypes, Sequelize, Model } from "sequelize";
+
+export default class Upload extends Model {
+  declare id: number;
+  declare title: string;
+  declare url: string;
+  declare owner: string;
+}
 
 // Belongs to User
-const Upload: ModelAttributes = {
-  title: {
-    type: DataTypes.STRING,
-  },
-  url: {
-    type: DataTypes.STRING,
-  },
-  owner: {
-    // Owner's Username
-    type: DataTypes.STRING,
-  },
-};
+export const uploadInit = (sequelize: Sequelize) => {
+  Upload.init(
+    {
+      title: {
+        type: DataTypes.STRING,
+      },
+      url: {
+        type: DataTypes.STRING,
+      },
+      owner: {
+        // Owner's Username
+        type: DataTypes.STRING,
+      },
+    },
+    { sequelize }
+  );
 
-export default Upload;
+  return Upload;
+};

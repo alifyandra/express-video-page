@@ -1,7 +1,7 @@
 import databaseConfig from "../config/database.config.js";
 import { Sequelize } from "sequelize";
-import User from "./user.js";
-import Upload from "./upload.js";
+import { userInit } from "./user.js";
+import { uploadInit } from "./upload.js";
 
 const sequelize = new Sequelize(
   databaseConfig.DB,
@@ -15,8 +15,9 @@ const sequelize = new Sequelize(
   }
 );
 
-const Users = sequelize.define("User", User);
-const Uploads = sequelize.define("Upload", Upload);
-Uploads.belongsTo(Users, { foreignKey: "ownerId" });
+const User = userInit(sequelize);
 
+const Upload = uploadInit(sequelize);
+Upload.belongsTo(User, { foreignKey: "ownerId" });
+// sequelize.models
 export default sequelize;
