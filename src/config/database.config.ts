@@ -4,7 +4,7 @@ export default {
   HOST: "localhost",
   USER: "postgres",
   PASSWORD: "POSTGRES_PASSWORD",
-  DB: "angular-video",
+  DB: "postgres",
   dialect: <Dialect>"postgres",
   pool: {
     max: 5,

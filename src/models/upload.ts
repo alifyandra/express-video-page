@@ -1,17 +1,17 @@
 import { DataTypes, ModelAttributes } from "sequelize";
 
-const User: ModelAttributes = {
-  username: {
+// Belongs to User
+const Upload: ModelAttributes = {
+  title: {
     type: DataTypes.STRING,
-    allowNull: false,
   },
-  password: {
+  url: {
     type: DataTypes.STRING,
-    allowNull: false,
   },
-  token: {
+  owner: {
+    // Owner's Username
     type: DataTypes.STRING,
   },
 };
 
-export default User;
+export default Upload;
