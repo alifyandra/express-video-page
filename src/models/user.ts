@@ -9,6 +9,7 @@ const User: ModelAttributes = {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  // To be deleted (JWT's  don't need to be stored in DB)
   token: {
     type: DataTypes.STRING,
   },
