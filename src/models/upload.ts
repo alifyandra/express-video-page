@@ -6,6 +6,7 @@ export default class Upload extends Model {
   declare url: string;
   declare owner: string;
   declare ownerId: number;
+  declare size: number;
 }
 
 // Belongs to User
@@ -21,6 +22,9 @@ export const uploadInit = (sequelize: Sequelize) => {
       owner: {
         // Owner's Username
         type: DataTypes.STRING,
+      },
+      size: {
+        type: DataTypes.INTEGER,
       },
     },
     { sequelize }

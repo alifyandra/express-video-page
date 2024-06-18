@@ -16,8 +16,7 @@ const sequelize = new Sequelize(
 );
 
 const User = userInit(sequelize);
-
 const Upload = uploadInit(sequelize);
 Upload.belongsTo(User, { foreignKey: "ownerId" });
-// sequelize.models
+
 export default sequelize;

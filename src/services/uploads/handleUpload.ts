@@ -48,6 +48,7 @@ export default (
               url: downloadUrl,
               owner: username,
               ownerId: userId,
+              size: file.size,
             });
 
             resolve(downloadUrl);
