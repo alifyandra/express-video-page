@@ -6,6 +6,10 @@ Be sure to have `yarn` installed on your machine and run `yarn install` to insta
 
 The database for this application is containerized through docker. To get the database ready, run `docker compose up`.
 
+## Firebase Storage
+
+This uses Firebase storage to store file uploads. To allow this application to work, create your own Firebase project and supply your own Firebase project credentials for this application.
+
 ## .env file
 
 To make sure the app runs properly, be sure to have a `.env` file on the top level of this repo with these variables.
