@@ -6,7 +6,11 @@ Backend code for the the [AngularLoginVideo](https://github.com/alifyandra/angul
 
 Be sure to have `yarn` installed on your machine and run `yarn install` to install all the node dependencies for this project.
 
-The database for this application is containerized through docker. To get the database ready, run `docker compose up`.
+## Database
+
+This application uses `postgres` as the default database by utilising the `sequelize` node.js ORM to communicate with the database.
+
+To make things easy, the database service can be containerized through docker. A `docker-compose.yml` file has been provided. To get the database ready, run `docker compose up`.
 
 ## Firebase Storage
 
