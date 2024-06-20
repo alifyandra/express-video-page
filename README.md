@@ -37,6 +37,8 @@ To build the application run `yarn run build`.
 
 ## Running
 
+This application is hardcoded to listen on port `8080` for http requests.
+
 To run the application, make sure you have previously ran `docker compose up` to make sure the database is running, then, run `yarn run start`.
 
 ## Further enquiries
