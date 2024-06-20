@@ -1,5 +1,7 @@
 # AngularLoginVideo Backend
 
+Backend code for the the [AngularLoginVideo](https://github.com/alifyandra/angular-video-page) frontend.
+
 ## Installation
 
 Be sure to have `yarn` installed on your machine and run `yarn install` to install all the node dependencies for this project.
