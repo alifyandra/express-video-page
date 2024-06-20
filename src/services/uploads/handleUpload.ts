@@ -13,7 +13,7 @@ export default (
   username: string,
   userId: string
 ) => {
-  return new Promise<string>(async (resolve, reject) => {
+  return new Promise<Upload>(async (resolve, reject) => {
     if (!file) {
       return reject("No image file");
     }
@@ -43,7 +43,7 @@ export default (
             if (!downloadUrl) {
               reject();
             }
-            await Upload.create({
+            const upload = await Upload.create({
               title: file.originalname,
               url: downloadUrl,
               owner: username,
@@ -51,8 +51,9 @@ export default (
               size: file.size,
             });
 
-            resolve(downloadUrl);
+            resolve(upload);
           } catch (err) {
+            console.error(err);
             reject(err);
           }
         })

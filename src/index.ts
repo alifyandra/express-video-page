@@ -11,6 +11,8 @@ import jwt from "jsonwebtoken";
 import loginUser from "./services/authentication/loginUser.js";
 import verifyToken from "./services/authentication/verifyToken.js";
 import getAllUploads from "./services/uploads/getUploads.js";
+import User from "./models/user.js";
+import Upload from "./models/upload.js";
 
 const app: Express = express();
 const port = 8080;
@@ -41,7 +43,7 @@ app.post(
     const { userId } = req.params;
 
     handleUpload(req.file, storage, username, userId)
-      .then((url) => res.status(200).send(url))
+      .then((upload) => res.status(200).send(upload.id.toString()))
       .catch((err) => {
         if (err === 400) {
           res.status(400).send("Duplicate file title");
@@ -102,6 +104,8 @@ app.post("/auth/register", (req, res) => {
 
 app.get("/uploads", verifyToken, (req, res) => {
   const { all } = req.query;
+  const id: string = req.query["id"] as string;
+
   if (all) {
     getAllUploads()
       .then((uploads) => {
@@ -109,8 +113,33 @@ app.get("/uploads", verifyToken, (req, res) => {
       })
       .catch((err) => res.status(500).send("Internal error"));
   } else {
-    res.status(404).send();
+    Upload.findByPk(id, {
+      attributes: ["title", "url", "owner", "id", "size", "createdAt"],
+    })
+      .then((upload) => {
+        upload
+          ? res.status(200).json(upload)
+          : res.status(404).send("Upload not found");
+      })
+      .catch((err) => res.status(404).send("Upload not found"));
   }
+});
+
+app.post("/auth/verifytoken", verifyToken, (req, res) => {
+  const { userId } = req.params;
+  const { username } = req.body;
+  User.findByPk(userId)
+    .then((user) => {
+      if (user?.username === username) {
+        res.status(200).send("Valid token and username");
+      } else {
+        res.status(401).send("Invalid token or username");
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send("Internal error");
+    });
 });
 
 app.listen(port, () => {
